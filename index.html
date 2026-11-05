@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a111c">
+<title>Maison Miroir — Atelier de Maquillaje</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <header class="topbar">
+    <button class="brand" data-action="home" aria-label="Volver al inicio">
+      <span class="brand-mark">M</span>
+      <span class="brand-text">
+        <b>Maison Miroir</b>
+        <small>atelier de maquillaje</small>
+      </span>
+    </button>
+    <div class="top-right">
+      <div class="hud hidden" id="hud">
+        <span id="hudRound">Reto 1 / 5</span>
+        <span class="hud-dot"></span>
+        <strong id="hudScore">0 pts</strong>
+      </div>
+      <button class="icon-btn" data-action="sound" id="soundBtn" aria-label="Activar o silenciar sonido" title="Sonido">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="sound-wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+      </button>
+      <button class="icon-btn" data-action="help" aria-label="Cómo jugar" title="Cómo jugar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.6 2.6 0 1 1 3.8 2.3c-.9.5-1.4 1-1.4 2.1"/><circle cx="12" cy="17.2" r=".6" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <button class="icon-btn" data-action="home" aria-label="Inicio" title="Inicio">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6.5 10v9.5h11V10"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="stage-wrap" aria-label="Espejo de maquillaje">
+      <div class="mirror" id="mirror">
+        <canvas id="faceCanvas" aria-label="Rostro para maquillar"></canvas>
+        <div class="mirror-glass" aria-hidden="true"></div>
+        <div class="mirror-caption" id="mirrorCaption">Toca la cara para colocar detalles</div>
+      </div>
+      <div class="stage-toolbar">
+        <button class="tool-btn" data-action="undo" id="undoBtn" title="Deshacer último cambio">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7H5v-4"/><path d="M5.5 7.5A8 8 0 1 1 4.6 15"/></svg>
+          <span>Deshacer</span>
+        </button>
+        <button class="tool-btn" data-action="random" title="Crear un look al azar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h3l10 12h3"/><path d="M4 18h3L17 6h3"/><path d="M18 3l3 3-3 3"/><path d="M18 15l3 3-3 3"/></svg>
+          <span>Aleatorio</span>
+        </button>
+        <button class="tool-btn" data-action="reset" title="Empezar de cero">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"/><path d="M7 19V9l5-4 5 4v10"/><path d="M10 19v-5h4v5"/></svg>
+          <span>Limpiar</span>
+        </button>
+        <button class="present-btn" data-action="present" id="presentBtn">
+          <span class="present-spark">✦</span>
+          <span id="presentLabel">Presentar look</span>
+        </button>
+      </div>
+    </section>
+
+    <aside class="panel" id="panel">
+      <div class="panel-top">
+        <div class="mode-row">
+          <div>
+            <span class="kicker" id="modeKicker">ESTUDIO LIBRE</span>
+            <h2 id="modeTitle">Tu lienzo</h2>
+          </div>
+          <div class="round-dots" id="roundDots" aria-label="Progreso del desafío"></div>
+        </div>
+
+        <div class="free-intro" id="freeIntro">
+          <p>Prueba, mezcla y pinta sin reglas. Tu look se guarda solo en este dispositivo.</p>
+          <div class="preset-row" id="presetRow" aria-label="Looks de la casa"></div>
+        </div>
+
+        <div class="client-card hidden" id="clientCard">
+          <div class="client-head">
+            <div class="avatar" id="clientAvatar">L</div>
+            <div class="client-id">
+              <span class="kicker">CLIENTA <span id="clientRound">1</span> DE 5</span>
+              <h3 id="clientName">Lucía</h3>
+            </div>
+            <div class="timer" id="timer">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9.5 2h5"/></svg>
+              <span id="timeLeft">2:30</span>
+            </div>
+          </div>
+          <p class="brief-text" id="clientBrief"></p>
+          <div class="checklist" id="checklist"></div>
+        </div>
+      </div>
+
+      <nav class="tabs" id="tabs" aria-label="Categorías de maquillaje">
+        <button class="tab is-active" data-tab="skin" aria-label="Piel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3s6 6.2 6 10.4A6 6 0 0 1 6 13.4C6 9.2 12 3 12 3z"/></svg>
+          <span>Piel</span>
+        </button>
+        <button class="tab" data-tab="eyes" aria-label="Ojos">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 6.8 12 6.8 21.5 12 21.5 12 18 17.2 12 17.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.6"/></svg>
+          <span>Ojos</span>
+        </button>
+        <button class="tab" data-tab="lips" aria-label="Labios">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.2 11.6c2.8-3.7 5.3-3.2 8.8-1.4 3.5-1.8 6-2.3 8.8 1.4-2.5 4.4-5.5 7-8.8 7s-6.3-2.6-8.8-7z"/><path d="M4.6 11.8c3.4-.7 5.1.6 7.4 2.2 2.3-1.6 4-2.9 7.4-2.2"/></svg>
+          <span>Labios</span>
+        </button>
+        <button class="tab" data-tab="details" aria-label="Detalles">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l1.7 4.4 4.4 1.7-4.4 1.7L12 15l-1.7-4.4-4.4-1.7 4.4-1.7z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/><path d="M5.2 16l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z"/></svg>
+          <span>Detalles</span>
+        </button>
+        <button class="tab" data-tab="style" aria-label="Estilo">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20c.4-4.5 2.7-7.5 7-8.2"/><path d="M9.5 12.5C7 10.5 6.4 7 8.6 4.6 11 2.1 15.5 3.4 16 7c.3 2.1-1.1 4.3-3.3 6.2"/><path d="M14 13.4c1.7 2 4.6 2.6 6.5.2"/></svg>
+          <span>Estilo</span>
+        </button>
+        <button class="tab" data-tab="brush" aria-label="Pincel libre">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 4.5 11 13"/><path d="M9.7 12.2c-1.6.2-2.9 1.5-3.4 3.1-.4 1.4-1.2 2.5-2.6 3.2 2.2 1.2 5.4 1 7-.6 1.3-1.2 1.6-2.9.9-4.2z"/><path d="M17.7 2.7l3.6 3.6-2.2 2.2-3.6-3.6z"/></svg>
+          <span>Pincel</span>
+        </button>
+      </nav>
+
+      <div class="panel-body" id="panelBody">
+
+        <section class="tab-pane is-active" data-pane="skin">
+          <div class="group">
+            <div class="group-head"><h4>Tono de piel</h4><span>Encuentra tu luz</span></div>
+            <div class="swatches skin-swatches" data-swatches="skin"></div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Rubor</h4><span id="blushVal">35%</span></div>
+            <div class="swatches" data-swatches="blush"></div>
+            <label class="slider-row">
+              <span>Intensidad</span>
+              <input type="range" min="0" max="100" value="35" id="blushRange" data-slider="blushIntensity">
+            </label>
+          </div>
+          <div class="group split">
+            <div class="mini-control">
+              <div class="group-head"><h4>Contorno</h4><span id="contourVal">25%</span></div>
+              <input type="range" min="0" max="100" value="25" id="contourRange" data-slider="contour">
+            </div>
+            <div class="mini-control">
+              <div class="group-head"><h4>Iluminador</h4><span id="highlightVal">38%</span></div>
+              <input type="range" min="0" max="100" value="38" id="highlightRange" data-slider="highlight">
+            </div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Textura</h4><span>Pequeños encantos</span></div>
+            <div class="toggle-row">
+              <button class="toggle" data-action="toggle-freckles" id="frecklesToggle" aria-pressed="false">
+                <span class="toggle-dot"></span> Pecas
+              </button>
+              <button class="toggle" data-action="toggle-mole" id="moleToggle" aria-pressed="false">
+                <span class="toggle-dot"></span> Lunar
+              </button>
+            </div>
+          </div>
+          <p class="tip-note">✦ Consejo: una piel luminosa hace que cualquier sombra brille más.</p>
+        </section>
+
+        <section class="tab-pane" data-pane="eyes">
+          <div class="group">
+            <div class="group-head"><h4>Sombra de ojos</h4><span id="shadowName">Champán</span></div>
+            <div class="swatches shadow-swatches" data-swatches="shadow"></div>
+            <label class="slider-row">
+              <span>Intensidad</span>
+              <input type="range" min="0" max="100" value="45" id="shadowRange" data-slider="shadowIntensity">
+            </label>
+            <div class="segmented" data-segment="shadowFinish">
+              <button data-action="set-shadowFinish" data-id="matte">Mate</button>
+              <button data-action="set-shadowFinish" data-id="satin">Satín</button>
+              <button data-action="set-shadowFinish" data-id="glitter">Glitter</button>
+            </div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Delineado</h4><span id="linerName">Suave</span></div>
+            <div class="segmented four" data-segment="liner">
+              <button data-action="set-liner" data-id="none">Sin</button>
+              <button data-action="set-liner" data-id="soft">Suave</button>
+              <button data-action="set-liner" data-id="wing">Alas</button>
+              <button data-action="set-liner" data-id="bold">Intenso</button>
+            </div>
+            <div class="swatches tiny" data-swatches="linerColor"></div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Pestañas</h4><span>Marca la mirada</span></div>
+            <div class="segmented" data-segment="lashes">
+              <button data-action="set-lashes" data-id="none">Al natural</button>
+              <button data-action="set-lashes" data-id="natural">Naturales</button>
+              <button data-action="set-lashes" data-id="glam">De gala</button>
+            </div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Cejas</h4><span id="browName">Naturales</span></div>
+            <div class="segmented" data-segment="brows">
+              <button data-action="set-brows" data-id="natural">Naturales</button>
+              <button data-action="set-brows" data-id="arched">Arqueadas</button>
+              <button data-action="set-brows" data-id="straight">Rectas</button>
+            </div>
+            <div class="swatches tiny" data-swatches="browColor"></div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Color de ojos</h4><span>El detalle que enamora</span></div>
+            <div class="swatches" data-swatches="eyeColor"></div>
+          </div>
+        </section>
+
+        <section class="tab-pane" data-pane="lips">
+          <div class="group">
+            <div class="group-head"><h4>Labial</h4><span id="lipName">Rosa palo</span></div>
+            <div class="swatches lip-swatches" data-swatches="lips"></div>
+            <label class="slider-row">
+              <span>Intensidad</span>
+              <input type="range" min="0" max="100" value="70" id="lipRange" data-slider="lipIntensity">
+            </label>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Acabado</h4><span id="lipFinishName">Satín</span></div>
+            <div class="segmented" data-segment="lipFinish">
+              <button data-action="set-lipFinish" data-id="matte">Mate</button>
+              <button data-action="set-lipFinish" data-id="satin">Satín</button>
+              <button data-action="set-lipFinish" data-id="gloss">Brillo</button>
+            </div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Perfilado</h4><span>Dibuja la silueta</span></div>
+            <button class="toggle wide" data-action="toggle-lipLiner" id="lipLinerToggle" aria-pressed="false">
+              <span class="toggle-dot"></span> Perfilador labial
+            </button>
+          </div>
+          <p class="tip-note">✦ Un labio con brillo captura la luz del espejo. Prueba el acabado «Brillo».</p>
+        </section>
+
+        <section class="tab-pane" data-pane="details">
+          <div class="group">
+            <div class="group-head"><h4>Pedrería y pegatinas</h4><span>Elige y toca la cara</span></div>
+            <div class="sticker-grid" id="stickerGrid">
+              <button class="sticker-btn" data-action="set-sticker" data-id="gem"><span>◆</span>Gema</button>
+              <button class="sticker-btn" data-action="set-sticker" data-id="star"><span>★</span>Estrella</button>
+              <button class="sticker-btn" data-action="set-sticker" data-id="heart"><span>♥</span>Corazón</button>
+              <button class="sticker-btn" data-action="set-sticker" data-id="flower"><span>✿</span>Flor</button>
+              <button class="sticker-btn" data-action="set-sticker" data-id="pearl"><span>●</span>Perla</button>
+              <button class="sticker-btn" data-action="set-sticker" data-id="erase"><span>⌫</span>Quitar</button>
+            </div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Destellos</h4><span>Un toque de fantasía</span></div>
+            <button class="toggle wide" data-action="toggle-glitter" id="glitterToggle" aria-pressed="false">
+              <span class="toggle-dot"></span> Purpurina en pómulos
+            </button>
+            <button class="toggle wide" data-action="toggle-mole" id="moleToggle2" aria-pressed="false" hidden></button>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Pincel libre</h4><span>Pinta lo que imagines</span></div>
+            <button class="soft-btn" data-tab-jump="brush">Abrir el pincel libre →</button>
+          </div>
+          <p class="tip-note">✦ Con «Quitar» puedes retirar una pegatina tocándola de nuevo.</p>
+        </section>
+
+        <section class="tab-pane" data-pane="style">
+          <div class="group">
+            <div class="group-head"><h4>Peinado</h4><span id="hairStyleName">Suelto</span></div>
+            <div class="segmented" data-segment="hairstyle">
+              <button data-action="set-hairstyle" data-id="loose">Suelto</button>
+              <button data-action="set-hairstyle" data-id="updo">Recogido</button>
+              <button data-action="set-hairstyle" data-id="bob">Bob</button>
+            </div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Color de pelo</h4><span>Un marco para tu cara</span></div>
+            <div class="swatches" data-swatches="hairColor"></div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Pendientes</h4><span>El brillo final</span></div>
+            <div class="segmented four" data-segment="earrings">
+              <button data-action="set-earrings" data-id="none">Sin</button>
+              <button data-action="set-earrings" data-id="hoops">Aros</button>
+              <button data-action="set-earrings" data-id="pearl">Perlas</button>
+              <button data-action="set-earrings" data-id="drop">Gota</button>
+            </div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Collar</h4><span>Delicado y luminoso</span></div>
+            <div class="segmented" data-segment="necklace">
+              <button data-action="set-necklace" data-id="none">Sin</button>
+              <button data-action="set-necklace" data-id="chain">Cadena</button>
+              <button data-action="set-necklace" data-id="pearls">Perlas</button>
+            </div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Atmósfera</h4><span>Cambia el fondo del espejo</span></div>
+            <div class="aura-row" data-swatches="aura"></div>
+          </div>
+        </section>
+
+        <section class="tab-pane" data-pane="brush">
+          <div class="group">
+            <div class="group-head"><h4>Pincel libre</h4><span>Toca y arrastra sobre la cara</span></div>
+            <p class="brush-note">Dibuja delineados, sombras, pecas… o convierte el rostro en una obra de arte. El trazo se queda dentro del rostro.</p>
+            <div class="swatches brush-swatches" data-swatches="brushColor"></div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Modo de trazo</h4><span id="brushModeName">Trazo</span></div>
+            <div class="segmented" data-segment="brushMode">
+              <button data-action="set-brushMode" data-id="draw">Trazo</button>
+              <button data-action="set-brushMode" data-id="glitter">Glitter</button>
+              <button data-action="set-brushMode" data-id="erase">Borrar</button>
+            </div>
+          </div>
+          <div class="group split">
+            <div class="mini-control">
+              <div class="group-head"><h4>Grosor</h4><span id="brushSizeVal">8 px</span></div>
+              <input type="range" min="2" max="40" value="8" id="brushSizeRange" data-slider="brushSize">
+            </div>
+            <div class="mini-control">
+              <div class="group-head"><h4>Opacidad</h4><span id="brushOpacityVal">80%</span></div>
+              <input type="range" min="10" max="100" value="80" id="brushOpacityRange" data-slider="brushOpacity">
+            </div>
+          </div>
+          <div class="group">
+            <div class="group-head"><h4>Historial del pincel</h4><span>Deshaz sin miedo</span></div>
+            <div class="button-row">
+              <button class="soft-btn" data-action="undo-stroke">Deshacer trazo</button>
+              <button class="soft-btn danger" data-action="clear-strokes">Borrar todos</button>
+            </div>
+          </div>
+          <div class="brush-preview-row">
+            <span class="brush-preview" id="brushPreview"></span>
+            <span>Tu trazo se verá así</span>
+          </div>
+        </section>
+
+      </div>
+    </aside>
+  </main>
+</div>
+
+<div class="screen start-screen" id="startScreen">
+  <div class="start-glow" aria-hidden="true"></div>
+  <div class="start-inner">
+    <div class="start-card">
+      <div class="start-eyebrow"><span>✦</span> Maison Miroir presenta</div>
+      <h1>Atelier de<br><em>maquillaje</em></h1>
+      <p class="start-lede">Un rostro, infinitas posibilidades. Crea tu propio look o escucha los deseos de cinco clientas muy especiales.</p>
+      <div class="mode-grid">
+        <button class="mode-card challenge" data-start="challenge">
+          <span class="mode-badge">5 RETOS</span>
+          <span class="mode-icon">✦</span>
+          <h2>Desafío de clientas</h2>
+          <p>Lee el encargo, cumple cada deseo y gana estrellas. ¿Podrás conseguir las 15?</p>
+          <span class="mode-cta">Empezar el desafío <b>→</b></span>
+        </button>
+        <button class="mode-card free" data-start="free">
+          <span class="mode-badge">SIN REGLAS</span>
+          <span class="mode-icon">❀</span>
+          <h2>Estudio libre</h2>
+          <p>Pinta, mezcla, prueba texturas y descarga tu retrato. Tu lienzo, tu imaginación.</p>
+          <span class="mode-cta">Crear mi look <b>→</b></span>
+        </button>
+      </div>
+      <div class="start-note">
+        <span id="bestScoreNote">Aún no hay récord guardado</span>
+        <span class="start-dot">·</span>
+        <span>Mejor en horizontal y con sonido ✧</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen modal-screen hidden" id="modal">
+  <div class="modal-card" id="modalCard" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr-only" id="live" aria-live="polite"></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
