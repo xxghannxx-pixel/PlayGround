@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <meta name="theme-color" content="#1a0a14">
+  <meta name="description" content="Glam Studio: un estudio de maquillaje interactivo. Crea looks libres, completa retos de clientas y guarda tu foto.">
+  <title>Glam Studio · Maquillaje libre</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232a1020'/%3E%3Cpath d='M12 18V7c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v11M10 18h12v6a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2z' fill='none' stroke='%23f1c675' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <button class="brand" id="homeBtn" aria-label="Volver a la portada">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 18.5V7.2c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v11.3"/>
+            <path d="M10.5 18.5h11v6.2a2.3 2.3 0 0 1-2.3 2.3h-6.4a2.3 2.3 0 0 1-2.3-2.3z"/>
+            <path d="M12 5.2 16 2l4 3.2"/>
+          </svg>
+        </span>
+        <span class="brand-text">Glam <b>Studio</b></span>
+      </button>
+      <div class="topbar-stats">
+        <div class="stat-chip" title="Estrellas conseguidas"><span class="star-ico">★</span><span id="starTotal">0</span></div>
+        <div class="stat-chip" title="Monedas de glamour"><span class="coin-ico">G</span><span id="coinTotal">0</span></div>
+        <div class="stat-chip progress-chip"><span id="challengeProgress">0/6</span><span class="progress-label">retos</span></div>
+        <button class="icon-button" id="soundBtn" aria-label="Silenciar sonido" title="Sonido">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path class="sound-wave" d="M15.5 8.5a5 5 0 0 1 0 7"/><path class="sound-wave2" d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        </button>
+        <button class="icon-button" id="menuBtn" aria-label="Menú" title="Menú">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="studio" id="studio" data-mobile-view="kit">
+      <aside class="panel tools-panel" aria-label="Kit de maquillaje">
+        <div class="panel-heading">
+          <div>
+            <p class="panel-kicker">Tu kit</p>
+            <h2>Herramientas</h2>
+          </div>
+          <span class="panel-spark" aria-hidden="true">✦</span>
+        </div>
+        <div class="tool-tabs" id="toolTabs" role="tablist" aria-label="Categorías de maquillaje"></div>
+        <div class="tool-grid" id="toolGrid"></div>
+        <div class="brush-controls">
+          <div class="control-heading">
+            <span id="activeToolName">Labial</span>
+            <span class="control-readout" id="brushReadout">24 px</span>
+          </div>
+          <label class="slider-label" for="sizeRange">Tamaño</label>
+          <input id="sizeRange" type="range" min="0.55" max="1.9" step="0.05" value="1">
+          <label class="slider-label" for="strengthRange">Intensidad</label>
+          <input id="strengthRange" type="range" min="0.4" max="1.8" step="0.05" value="1">
+        </div>
+        <p class="tool-hint" id="toolHint">Desliza el labial sobre los labios. Repite para intensificar el color.</p>
+      </aside>
+
+      <section class="stage-wrap" aria-label="Lienzo de maquillaje">
+        <div class="stage-card">
+          <div class="stage-topbar">
+            <div class="live-badge"><span class="live-dot"></span><span id="lookLabel">Estudio libre</span></div>
+            <div class="stage-actions">
+              <button class="icon-button small" id="undoBtn" aria-label="Deshacer" title="Deshacer" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>
+              </button>
+              <button class="icon-button small" id="redoBtn" aria-label="Rehacer" title="Rehacer" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg>
+              </button>
+              <button class="icon-button small" id="soundStageBtn" aria-label="Silenciar sonido" title="Sonido">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="face-shell" id="faceShell">
+            <div class="face-scene" id="faceScene"></div>
+            <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+            <div class="canvas-hint" id="canvasHint"><span aria-hidden="true">✦</span> Toca y arrastra sobre la cara</div>
+            <div class="glow-ring" aria-hidden="true"></div>
+          </div>
+          <div class="stage-footer">
+            <button class="footer-button" id="modelBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>
+              Modelo
+            </button>
+            <button class="footer-button" id="randomBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="m21 3-6.5 6.5"/><path d="M3 21l6.5-6.5"/><path d="M16 21h5v-5"/><path d="m21 21-6-6"/><path d="M3 3l6 6"/></svg>
+              Sorpresa
+            </button>
+            <button class="footer-button" id="saveBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h4l2-3h4l2 3h4v13H4z"/><circle cx="12" cy="13" r="4"/></svg>
+              Foto
+            </button>
+            <button class="footer-button danger-soft" id="clearBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="m6 7 1 13h10l1-13"/></svg>
+              Limpiar
+            </button>
+          </div>
+        </div>
+
+        <div class="mobile-tabs" id="mobileTabs" role="tablist" aria-label="Paneles de trabajo">
+          <button class="mobile-tab is-active" data-view="kit" role="tab" aria-selected="true">Kit</button>
+          <button class="mobile-tab" data-view="colors" role="tab" aria-selected="false">Color</button>
+          <button class="mobile-tab" data-view="client" role="tab" aria-selected="false">Reto</button>
+        </div>
+      </section>
+
+      <aside class="panel looks-panel" aria-label="Reto y colores">
+        <div class="client-card" id="clientCard"></div>
+        <div class="palette-card">
+          <div class="palette-heading">
+            <div>
+              <p class="panel-kicker">Paleta</p>
+              <h3 id="paletteTitle">Labial</h3>
+            </div>
+            <div class="current-color"><span id="currentColorChip"></span><span id="currentColorName">Fresa</span></div>
+          </div>
+          <div class="swatches" id="swatches" role="group" aria-label="Colores disponibles"></div>
+        </div>
+        <div class="actions-card">
+          <button class="btn-primary wide" id="presentBtn" hidden>Presentar look</button>
+          <button class="btn-ghost wide" id="galleryBtn">Ver todos los retos</button>
+          <button class="btn-ghost wide" id="randomBtn2">Look sorpresa</button>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="landing" id="landing">
+    <div class="landing-aurora" aria-hidden="true"></div>
+    <div class="landing-inner">
+      <section class="landing-copy">
+        <p class="eyebrow"><span></span> Estudio de belleza interactivo</p>
+        <h1 class="landing-title"><span>Glam</span><em>Studio</em></h1>
+        <p class="tagline">Tu cara, tus reglas. Maquilla libremente, juega con el color y crea looks que brillen.</p>
+        <ul class="feature-list">
+          <li><span class="feature-num">01</span><div><b>Maquillaje libre</b><p>Labios, sombras, rubor, delineado y más.</p></div></li>
+          <li><span class="feature-num">02</span><div><b>6 clientas</b><p>Escucha su brief y consigue tres estrellas.</p></div></li>
+          <li><span class="feature-num">03</span><div><b>Tu foto</b><p>Guarda cada look en alta resolución.</p></div></li>
+        </ul>
+        <div class="landing-actions">
+          <button class="btn-primary landing-play" id="playBtn" aria-label="Play">
+            <span>Jugar ahora</span><small>Play</small>
+          </button>
+          <button class="btn-ghost" id="landingChallengesBtn">Ver retos</button>
+          <button class="text-button" id="howBtn">¿Cómo se juega?</button>
+        </div>
+        <p class="landing-note">Sin descargas · Ratón o dedo · Tu progreso se guarda en este dispositivo</p>
+      </section>
+      <section class="landing-art" aria-hidden="true">
+        <div class="arch-wrap">
+          <div class="arch-glow"></div>
+          <div class="arch">
+            <canvas id="heroCanvas" width="900" height="1150"></canvas>
+            <div class="arch-sheen"></div>
+          </div>
+          <div class="floating-tag tag-one"><span>✦</span> 12 labiales</div>
+          <div class="floating-tag tag-two"><span>★</span> Retos de estilo</div>
+          <div class="floating-tag tag-three"><span>◐</span> 8 tonos de piel</div>
+        </div>
+        <div class="landing-orbit orbit-one"></div>
+        <div class="landing-orbit orbit-two"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal" id="challengeModal" role="dialog" aria-modal="true" aria-labelledby="challengeModalTitle">
+    <div class="modal-backdrop" data-close="challengeModal"></div>
+    <div class="modal-card challenge-modal-card">
+      <div class="modal-head">
+        <div>
+          <p class="panel-kicker">La agenda del salón</p>
+          <h2 id="challengeModalTitle">Clientas y retos</h2>
+        </div>
+        <button class="icon-button modal-close" data-close="challengeModal" aria-label="Cerrar">✕</button>
+      </div>
+      <p class="modal-sub">Cada clienta tiene un look en mente. Pinta, combina y preséntalo para ganar estrellas.</p>
+      <div class="challenge-grid" id="challengeGrid"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modelModal" role="dialog" aria-modal="true" aria-labelledby="modelModalTitle">
+    <div class="modal-backdrop" data-close="modelModal"></div>
+    <div class="modal-card model-modal-card">
+      <div class="modal-head">
+        <div>
+          <p class="panel-kicker">Tu lienzo</p>
+          <h2 id="modelModalTitle">Diseña a tu modelo</h2>
+        </div>
+        <button class="icon-button modal-close" data-close="modelModal" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="model-section">
+        <h3>Tono de piel</h3>
+        <div class="swatch-row" id="skinSwatches"></div>
+      </div>
+      <div class="model-section">
+        <h3>Color de pelo</h3>
+        <div class="swatch-row" id="hairSwatches"></div>
+      </div>
+      <div class="model-section">
+        <h3>Color de ojos</h3>
+        <div class="swatch-row" id="eyeSwatches"></div>
+      </div>
+      <div class="model-section">
+        <h3>Peinado</h3>
+        <div class="style-options" id="styleOptions"></div>
+      </div>
+      <div class="model-section">
+        <h3>Fondo del estudio</h3>
+        <div class="backdrop-options" id="backdropOptions"></div>
+      </div>
+      <button class="btn-primary wide" data-close="modelModal">Listo</button>
+    </div>
+  </div>
+
+  <div class="modal" id="resultModal" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <div class="modal-backdrop" data-close="resultModal"></div>
+    <div class="modal-card result-card" id="resultCard">
+      <div id="resultContent"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="howModal" role="dialog" aria-modal="true" aria-labelledby="howModalTitle">
+    <div class="modal-backdrop" data-close="howModal"></div>
+    <div class="modal-card how-card">
+      <div class="modal-head">
+        <div>
+          <p class="panel-kicker">Bienvenida al salón</p>
+          <h2 id="howModalTitle">Cómo se juega</h2>
+        </div>
+        <button class="icon-button modal-close" data-close="howModal" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="how-steps">
+        <div class="how-step"><span>1</span><div><h3>Elige una herramienta</h3><p>Labial, sombra, rubor, delineador, iluminador, pecas… Todo está en tu kit.</p></div></div>
+        <div class="how-step"><span>2</span><div><h3>Pinta sobre la cara</h3><p>Toca y arrastra con el ratón o el dedo. Cada herramienta respeta la zona de la cara.</p></div></div>
+        <div class="how-step"><span>3</span><div><h3>Completa el brief</h3><p>En los retos, las barras muestran qué tan cerca estás del look pedido. Cuando estés lista, preséntalo.</p></div></div>
+        <div class="how-step"><span>4</span><div><h3>Gana estrellas</h3><p>Consigue hasta tres estrellas por clienta, desbloquea monedas y guarda tu foto favorita.</p></div></div>
+      </div>
+      <p class="how-tip">Truco: toca una pista de color del brief para que el kit seleccione la herramienta y el tono exactos.</p>
+      <button class="btn-primary wide" data-close="howModal">Empezar a crear</button>
+    </div>
+  </div>
+
+  <div class="modal" id="menuModal" role="dialog" aria-modal="true" aria-labelledby="menuModalTitle">
+    <div class="modal-backdrop" data-close="menuModal"></div>
+    <div class="modal-card menu-card">
+      <div class="modal-head">
+        <div>
+          <p class="panel-kicker">Glam Studio</p>
+          <h2 id="menuModalTitle">Menú</h2>
+        </div>
+        <button class="icon-button modal-close" data-close="menuModal" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="menu-list">
+        <button class="menu-item" data-menu="challenges"><span>◇</span><div><b>Retos de clientas</b><small>6 looks por descubrir</small></div></button>
+        <button class="menu-item" data-menu="how"><span>?</span><div><b>Cómo se juega</b><small>Herramientas, trucos y estrellas</small></div></button>
+        <button class="menu-item" data-menu="free"><span>∞</span><div><b>Estudio libre</b><small>Maquilla sin objetivos</small></div></button>
+        <button class="menu-item" data-menu="landing"><span>⌂</span><div><b>Volver a la portada</b><small>Ver la presentación</small></div></button>
+        <button class="menu-item subtle" data-menu="reset"><span>↺</span><div><b>Borrar progreso</b><small>Estrellas, monedas y retos guardados</small></div></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
